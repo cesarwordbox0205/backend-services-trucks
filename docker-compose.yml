@@ -1,0 +1,16 @@
+version: "3.7"
+
+services:
+  truck_service:
+    build: .
+    volumes:
+      - ./src/resources/credentials.json:/etc/gcloud/service-accounts/key.json
+    ports:
+      - "80:80"
+  
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /etc/gcloud/service-accounts/key.json
+      NEO4J_USER: neo4j
+      NEO4J_URI: neo4j://34.83.114.34:7687
+      NEO4J_PASS: QDuKTTu9
+
