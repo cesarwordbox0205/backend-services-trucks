@@ -1,6 +1,6 @@
 import os
 
-from bp import TruckService
+from bp import TruckService, FetchService
 from data import TruckRepository, truck_schema
 from fastapi import Depends
 from neo4j import GraphDatabase
@@ -27,3 +27,10 @@ def truck_service_module(
     )
 ) -> TruckService:
     return TruckService(truck_repository)
+
+def fetch_service_module(
+    truck_repository: TruckRepository = Depends(
+        truck_repository_module
+    )
+) -> FetchService:
+    return FetchService(truck_repository)

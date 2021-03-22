@@ -18,6 +18,7 @@ CODE = "code"
 MESSAGE = "message"
 ITEMS = "items"
 PAGE = "page"
+SUCCESSFUL = "successful"
 
 class Data(BaseModel):
     params: Dict

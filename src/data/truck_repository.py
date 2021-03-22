@@ -49,7 +49,6 @@ class TruckRepository():
             MATCH (t:Truck{longitude:$longitude, latitude:$latitude})
             RETURN t
             """
-        print("To query:::", longitude, latitude, type(longitude), type(latitude))
         return list(tx.run(query, longitude = longitude, latitude = latitude))
         
     def _get_trucks_by_params(self, tx, search_params):
@@ -70,11 +69,11 @@ class TruckRepository():
             """
         return list(tx.run(query, **params))
     
-    def save(self, record):
+    def save_record(self, record):
         with self.driver.session() as session:
-            session.write_transaction(self.save_record, record)
+            session.write_transaction(self._save_record, record)
                 
-    def save_record(self, tx, record):      
+    def _save_record(self, tx, record):      
 
         db_data = {}
         for key, value in self.schema.items():
@@ -82,3 +81,30 @@ class TruckRepository():
                 db_data[value] = record[key]
                 
         tx.run(self.save_query, objectid = record["objectid"], **db_data)
+
+
+    def get_last_hash(self):
+        with self.driver.session() as session:
+            for record in session.read_transaction(self._get_last_hash):
+                return record["last_hash"]
+
+    def save_last_hash(self, hash: str):
+        with self.driver.session() as session:
+            session.write_transaction(self._save_last_hash, hash)
+
+
+    def _save_last_hash(self, tx, last_hash: str):
+        save_hash_query = \
+        """
+        MERGE (dataset:DATASET{name:"truck"})
+        SET dataset.last_hash = $last_hash
+        """
+        tx.run(save_hash_query, last_hash = last_hash)
+
+    def _get_last_hash(self, tx):
+        get_hash_query = \
+        """
+        MATCH (dataset:DATASET{name:"truck"})
+        RETURN dataset.last_hash as last_hash
+        """
+        return list(tx.run(get_hash_query))

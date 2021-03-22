@@ -12,5 +12,3 @@ class TruckService:
 
     def get_trucks_by_params(self, params: Dict):
         return self.truck_repository.get_trucks_by_params(params)
-        
-
